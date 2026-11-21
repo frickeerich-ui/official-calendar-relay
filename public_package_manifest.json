@@ -1,0 +1,18 @@
+{
+  "schema": "public-calendar-relay-package",
+  "version": 1,
+  "archive_sha256": "793e547b587e174c5e4bc2463ade59e272d65a921c1d0357e32eab0e29d5491e",
+  "files": {
+    "public_calendar.py": "c8353626c5acd5c5c24181b304651ec31f21a3288a5a5723ddd4f4d25411311b",
+    "relay_core.py": "a974a3fcafacdf9d60b7b77fe72c25386f11de680f220c231279341c7351b133",
+    "requirements.txt": "0d0d2938e5443f318fc97363f42cffe3309df1b718cc2bf713263a68cb7bbee5",
+    "README.md": "74cb4786ae96363339026cb264b964ade69c6a3ec6dda1876ee3ba694a13672e",
+    "tests/test_relay.py": "f788d5b60eda9676c29337527e7562056596607272215b418364576900e607f3",
+    "tests/fixtures/SYNTHETIC_bls.ics": "3902db540f278f7b2388fe9c530d4f92463bbc78afde30748b88b6074cac4034",
+    "tests/fixtures/nyse.html": "d7741bc3339e7d188ba219beef2799f4df8e44f8c4d7029b6c1709214726f2fd",
+    "tests/fixtures/fed.html": "f1d2c1b6e4225146aa99d053fca988d2693d1ff3ec72bc002460d0d6dd53681b",
+    "tests/fixtures/dol.html": "80e78de786a55636aec60c2bdb23773c237ef973eee33293b136016294ce3ded",
+    "tests/fixtures/census.html": "34a8acbd6190a7a39076c08aa3b93685d11e82c68d5a069b315aae9a7ca943a7",
+    "tests/fixtures/bea.html": "6cf9df6c12a4e7b016008c76dcf90bbc6bb82a614379d7fafe8a1da98dec282b"
+  }
+}
