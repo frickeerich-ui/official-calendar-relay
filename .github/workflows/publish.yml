@@ -13,7 +13,7 @@ concurrency:
 jobs:
   build:
     if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     timeout-minutes: 10
     permissions:
       contents: write
@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v6
       - name: Verify frozen public package and extract
         run: |
-          echo '793e547b587e174c5e4bc2463ade59e272d65a921c1d0357e32eab0e29d5491e  public_calendar_relay.zip' | sha256sum -c -
+          echo '793e547b587e174c5e4bc2463ade59e272d65a921c1d0357e32eab0e29d5491e  public_calendar_relay.zip' | shasum -a 256 -c -
           unzip -oq public_calendar_relay.zip
       - uses: actions/setup-python@v6
         with:
