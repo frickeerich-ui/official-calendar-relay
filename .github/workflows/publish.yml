@@ -29,7 +29,23 @@ jobs:
       - run: python -m pip install --disable-pip-version-check -r requirements.txt
       - run: python -B -m unittest discover -s tests -v
       - name: Retrieve and independently validate official public sources
-        run: python -B relay_core.py --output public
+        run: |
+          python -B - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          import public_calendar as c
+          import relay_core as r
+          def retrieve(url):
+              try:
+                  value=c.fetch(url)
+                  print(json.dumps(dict(url=url,retrieved_at=datetime.now(timezone.utc).isoformat(),sha256=c.sha(value),bytes=len(value),metadata=value.metadata)),flush=True)
+                  return value
+              except Exception as exc:
+                  print(json.dumps(dict(url=url,retrieved_at=datetime.now(timezone.utc).isoformat(),fault=str(exc))),flush=True)
+                  raise
+          body=r.create_bundle(get=retrieve)
+          print(r.publish('public',body))
+          PY
       - name: Record public provenance heartbeat
         run: |
           python - <<'PY'
