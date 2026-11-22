@@ -65,10 +65,14 @@ jobs:
           p.write_bytes(text.encode('utf-8'))
           print('Reviewed public browser transport source SHA256',hashlib.sha256(p.read_bytes()).hexdigest())
           PY
+      - name: Verify optional-source driver
+        run: |
+          python -c "import hashlib,pathlib; assert hashlib.sha256(pathlib.Path('cloud_refresh_v3.py').read_bytes().replace(b'\r\n',b'\n')).hexdigest()=='c8ac5cd9e3bda7e970bd2c755e773a5134d7372c0eed416489542ff75aa4d0f6'"
+          python -B cloud_refresh_v3.py --self-test
       - run: python -B -m unittest discover -s tests -v
       - name: Retrieve and independently validate official sources
         if: ${{ !inputs.verified_bootstrap }}
-        run: python -B cloud_refresh.py --output public
+        run: python -B cloud_refresh_v3.py --output public
       - name: Explicit one-time independently verified bootstrap
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.verified_bootstrap }}
         run: python -B cloud_refresh.py --output public --verified-bootstrap verified_bootstrap
