@@ -1,0 +1,23 @@
+{
+  "archive_sha256": "be9f25d34a2e82a5319459bcb6a4da8188915fc5deee1182cdccc06643e1e44a",
+  "files": {
+    "public_calendar.py": "034a17f92e119995cacac3cf2f57f4e3ca10d8acf4ac22af63f13e6cd4e4dfd8",
+    "relay_core.py": "245f00d8a8a07dc1d1e206486e6aba9b2693286c3723c7ad2da334ae83dda355",
+    "cloud_refresh.py": "6f60fba943dd1e68dd618ca9a1aeb4123a910526edcbaecf24ed73199a2041e5",
+    "README.md": "74cb4786ae96363339026cb264b964ade69c6a3ec6dda1876ee3ba694a13672e",
+    "requirements.txt": "ee09a3a327139aab561fcaefccb96903ad3cb82dfecadbd906dd796eecede1d7",
+    "tests/test_cloud.py": "208f7eb9437df0089e3e4c96d050b2d7f97b1ea1df7e3d6efc0da79bcb376f20",
+    "tests/test_relay.py": "cc4dc51326fb9491f28d544aa9a51b5f4c9c258ee56167e6245a513efaefd063",
+    "tests/fixtures/bea.html": "6cf9df6c12a4e7b016008c76dcf90bbc6bb82a614379d7fafe8a1da98dec282b",
+    "tests/fixtures/census.html": "34a8acbd6190a7a39076c08aa3b93685d11e82c68d5a069b315aae9a7ca943a7",
+    "tests/fixtures/dol.html": "80e78de786a55636aec60c2bdb23773c237ef973eee33293b136016294ce3ded",
+    "tests/fixtures/fed.html": "f1d2c1b6e4225146aa99d053fca988d2693d1ff3ec72bc002460d0d6dd53681b",
+    "tests/fixtures/nyse.html": "d7741bc3339e7d188ba219beef2799f4df8e44f8c4d7029b6c1709214726f2fd",
+    "tests/fixtures/SYNTHETIC_bls.ics": "3902db540f278f7b2388fe9c530d4f92463bbc78afde30748b88b6074cac4034",
+    "verified_bootstrap/calendar_bundle.json": "ca0fabd7a7c16d31ab04d406d26954cef95786c048f91f62471a4627575201ca",
+    "verified_bootstrap/calendar_bundle.sha256": "faf1b292d0fa5fba7752ae9d1461a4ae2750847112dba03820c692be5a8814fa",
+    "verified_bootstrap/latest.json": "3ffe8676734ee25d46893e8b85064d690a7cc9fb411201a86b391e01be791239",
+    "verified_bootstrap/source_manifest.json": "3b1d118f3fea4e21a18597fee933ae5c5611e82e3634e9538ac45a3a53652f5c"
+  },
+  "public_data_only": true
+}
