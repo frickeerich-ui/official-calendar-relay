@@ -7,7 +7,7 @@ on:
       runner_os:
         description: 'Official-source retrieval runner'
         type: choice
-        default: ubuntu-24.04
+        default: windows-2022
         options: [ubuntu-24.04, windows-2022]
       verified_bootstrap:
         description: 'Publish the independently verified one-time official-source bootstrap (original timestamps; age <=36h)'
@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
-    runs-on: ${{ inputs.runner_os || 'ubuntu-24.04' }}
+    runs-on: ${{ inputs.runner_os || 'windows-2022' }}
     defaults:
       run:
         shell: bash
@@ -67,7 +67,7 @@ jobs:
           PY
       - name: Verify optional-source driver
         run: |
-          python -c "import hashlib,pathlib; assert hashlib.sha256(pathlib.Path('cloud_refresh_v3.py').read_bytes().replace(b'\r\n',b'\n')).hexdigest()=='c8ac5cd9e3bda7e970bd2c755e773a5134d7372c0eed416489542ff75aa4d0f6'"
+          python -c "import hashlib,pathlib; assert hashlib.sha256(pathlib.Path('cloud_refresh_v3.py').read_bytes().replace(b'\r\n',b'\n')).hexdigest()=='b9b0cfb69b40ebcdf59dbef63302b6c67081ee2904cb5f6cc4fec1e6a6e4eb05'"
           python -B cloud_refresh_v3.py --self-test
       - run: python -B -m unittest discover -s tests -v
       - name: Retrieve and independently validate official sources
