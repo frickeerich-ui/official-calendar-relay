@@ -22,12 +22,11 @@ def checked_optional(url,data):
     headings=[n.text() for tag in ('h1','h2','title') for n in doc.all(tag)]
     expected=f'{c.calendar.month_name[month]} {year}'
     tables=[t for t in doc.all('table') if any([n.text().lower() for n in c.cells(row)][:3]==['date','time','release'] for row in t.all('tr'))]
-    if not any(expected in h for h in headings) or not tables:
+    if not any(expected in h for h in headings) or len(tables)!=1:
         at=getattr(data,'metadata',{}).get('retrieved_at') or datetime.now(c.ET).isoformat()
-        raise c.SourceUnavailable('OPTIONAL_BLS_HTML_NOT_CALENDAR; retrieved_at='+at+'; sha256='+c.sha(data)+'; bytes='+str(len(data)))
+        raise c.SourceUnavailable('OPTIONAL_BLS_HTML_NOT_CALENDAR_OR_AMBIGUOUS; retrieved_at='+at+'; sha256='+c.sha(data)+'; bytes='+str(len(data)))
     # Once it IS an identifiable schedule, malformed dates/times and any later
     # valid ICS/HTML disagreement must fail the entire refresh.
-    c.require(len(tables)==1,'Ambiguous official BLS schedule tables')
     c.parse_bls(data,url,year,month)
     return data
 
@@ -70,7 +69,12 @@ def self_test():
             return refresh(Path('unused'),Browser,get,NOW,lambda output,body:r.verify_bundle(body,c.sha(body),NOW))
         def test_optional_shell_is_rejected_without_masking_required_ics(self):
             b=self.build();self.assertIn('bls_ics',b['source_manifest']);self.assertNotIn('bls_html_2026_11',b['source_manifest'])
-            self.assertIn('OPTIONAL_BLS_HTML_NOT_CALENDAR',b['retrieval_failures']['bls_html_2026_11']['error'])
+            self.assertIn('OPTIONAL_BLS_HTML_NOT_CALENDAR_OR_AMBIGUOUS',b['retrieval_failures']['bls_html_2026_11']['error'])
+        def test_ambiguous_optional_tables_are_unusable_not_verified(self):
+            b=self.build(secondary=valid+valid);self.assertNotIn('bls_html_2026_11',b['source_manifest'])
+            self.assertIn('AMBIGUOUS',b['retrieval_failures']['bls_html_2026_11']['error'])
+        def test_ambiguous_secondary_cannot_supply_missing_bls(self):
+            with self.assertRaises(c.InvalidCalendar):self.build(primary=False,secondary=valid+valid)
         def test_missing_ics_and_unusable_secondary_still_fail_closed(self):
             with self.assertRaises(c.InvalidCalendar):self.build(primary=False)
         def test_malformed_ics_is_never_masked_by_optional_source_status(self):
