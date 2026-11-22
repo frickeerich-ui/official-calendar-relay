@@ -3,6 +3,11 @@ on:
   schedule:
     - cron: '17 4,10,16,22 * * *'
   workflow_dispatch:
+    inputs:
+      verified_bootstrap:
+        description: 'Publish the independently verified one-time official-source bootstrap (original timestamps; age <=36h)'
+        type: boolean
+        default: false
   push:
     branches: [main]
 permissions:
@@ -12,52 +17,35 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
-    if: github.ref == 'refs/heads/main'
-    runs-on: macos-latest
-    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v6
       - name: Verify frozen public package and extract
         run: |
-          echo '793e547b587e174c5e4bc2463ade59e272d65a921c1d0357e32eab0e29d5491e  public_calendar_relay.zip' | shasum -a 256 -c -
-          unzip -oq public_calendar_relay.zip
+          echo "be9f25d34a2e82a5319459bcb6a4da8188915fc5deee1182cdccc06643e1e44a  public_calendar_relay_v2.zip" | sha256sum --check --strict
+          unzip -o public_calendar_relay_v2.zip
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check -r requirements.txt
+      - run: python -m playwright install --with-deps chromium
       - run: python -B -m unittest discover -s tests -v
-      - name: Retrieve and independently validate official public sources
-        run: |
-          python -B - <<'PY'
-          import json
-          from datetime import datetime, timezone
-          import public_calendar as c
-          import relay_core as r
-          def retrieve(url):
-              try:
-                  value=c.fetch(url)
-                  print(json.dumps(dict(url=url,retrieved_at=datetime.now(timezone.utc).isoformat(),sha256=c.sha(value),bytes=len(value),metadata=value.metadata)),flush=True)
-                  return value
-              except Exception as exc:
-                  print(json.dumps(dict(url=url,retrieved_at=datetime.now(timezone.utc).isoformat(),fault=str(exc))),flush=True)
-                  raise
-          body=r.create_bundle(get=retrieve)
-          print(r.publish('public',body))
-          PY
+      - name: Retrieve and independently validate official sources
+        if: ${{ !inputs.verified_bootstrap }}
+        run: python -B cloud_refresh.py --output public
+      - name: Explicit one-time independently verified bootstrap
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.verified_bootstrap }}
+        run: python -B cloud_refresh.py --output public --verified-bootstrap verified_bootstrap
       - name: Record public provenance heartbeat
         run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          pointer=json.loads(Path('public/latest.json').read_text())
-          Path('public_refresh_provenance.json').write_text(json.dumps(pointer,sort_keys=True)+'\n')
-          PY
+          cp public/latest.json public_refresh_provenance.json
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -- public_refresh_provenance.json
-          git commit -m 'Record verified public calendar refresh'
+          git diff --cached --quiet || git commit -m 'Record verified public calendar refresh'
           git push origin HEAD:main
       - uses: actions/upload-pages-artifact@v4
         with:
